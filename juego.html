@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jose | Pro Portfolio 2026</title>
+    <style>
+        /* --- 1. VARIABLES (SISTEMA DE DISEÑO) --- */
+        :root {
+            --primary: #00ffcc;
+            --bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text: #ffffff;
+            --nav-bg: rgba(15, 15, 15, 0.9);
+            --shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        .light-mode {
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #1a202c;
+            --nav-bg: rgba(240, 244, 248, 0.9);
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        /* --- 2. NAVBAR CON MENÚ HAMBURGUESA --- */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(15px);
+            padding: 15px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2000;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+
+        .nav-links { display: flex; gap: 25px; align-items: center; }
+        .nav-links a { color: var(--text); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
+
+        .menu-btn { display: none; cursor: pointer; font-size: 1.8rem; color: var(--primary); }
+
+        /* Estilos Móvil para el Navbar */
+        @media (max-width: 768px) {
+            .menu-btn { display: block; }
+            .nav-links {
+                position: absolute; top: 100%; right: -100%;
+                width: 70%; height: 100vh; background: var(--card-bg);
+                flex-direction: column; padding-top: 50px;
+                transition: 0.4s ease; box-shadow: -10px 0 20px rgba(0,0,0,0.2);
+            }
+            .nav-links.active { right: 0; }
+        }
+
+        /* --- 3. HERO & SECCIONES --- */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 204, 0.1), transparent);
+        }
+
+        h1 { font-size: clamp(3rem, 12vw, 5rem); line-height: 1; }
+        .subtitle { color: var(--primary); letter-spacing: 5px; margin-top: 10px; font-weight: 300; }
+
+        section { padding: 100px 8%; }
+
+        .card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- 4. GALERÍA OPTIMIZADA --- */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .gallery-item {
+            width: 100%; height: 280px; object-fit: cover;
+            border-radius: 20px; cursor: pointer;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #222; /* Placeholder mientras carga */
+        }
+        .gallery-item:hover { transform: scale(1.02); filter: brightness(1.1); }
+
+        /* --- 5. LIGHTBOX MEJORADO --- */
+        #lightbox {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); display: none;
+            justify-content: center; align-items: center; z-index: 3000;
+        }
+        #lightbox img { max-width: 90%; max-height: 85vh; border-radius: 10px; border: 2px solid var(--primary); }
+        .close-hint { position: absolute; bottom: 30px; color: #888; font-size: 0.9rem; }
+
+        /* --- 6. CONTROLES Y UTILIDADES --- */
+        .controls { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column; gap: 15px; z-index: 1000; }
+        .btn-float {
+            width: 55px; height: 55px; border-radius: 50%; border: none;
+            background: var(--primary); color: #000; font-size: 1.4rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: 0.3s;
+        }
+        .btn-float:hover { transform: translateY(-5px); background: #fff; }
+
+        .reveal { opacity: 0; transform: translateY(50px); transition: 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        #clock { font-family: monospace; color: var(--primary); margin-top: 20px; font-size: 1.3rem; }
+
+        /* Corrección de Formulario */
+        form { display: flex; flex-direction: column; gap: 20px; }
+        input, textarea {
+            padding: 18px; border-radius: 15px; border: 1px solid rgba(128,128,128,0.2);
+            background: var(--bg); color: var(--text); font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">JOSE.DEV</div>
+        <div class="menu-btn" onclick="toggleMenu()">☰</div>
+        <div class="nav-links" id="navLinks">
+            <a href="#inicio" onclick="toggleMenu()">Inicio</a>
+            <a href="#sobremi" onclick="toggleMenu()">Sobre Mí</a>
+            <a href="#galeria" onclick="toggleMenu()">Galería</a>
+            <a href="#contacto" onclick="toggleMenu()">Contacto</a>
+        </div>
+    </nav>
+
+    <header id="inicio">
+        <h1 id="welcomeTitle">¡Hola, soy Jose!</h1>
+        <p class="subtitle">BUILDING VIRTUAL WORLDS</p>
+        <div id="clock">00:00:00</div>
+    </header>
+
+    <section id="sobremi">
+        <div class="card reveal">
+            <h2>🙋 Perfil Técnico</h2>
+            <br>
+            <p>
+                Me especializo en la optimización técnica de <strong>Minecraft Bedrock</strong>, 
+                ajuste de latencia en periféricos y gestión de redes residenciales. Soy un 
+                entusiasta de la eficiencia, ya sea en un servidor de bloques o analizando 
+                la estrategia del <strong>Real Madrid</strong> en el campo.
+            </p>
+            <p style="margin-top: 15px;">
+                Domino entornos como <strong>Visual Studio Code</strong> para crear soluciones 
+                web interactivas y funcionales.
+            </p>
+        </div>
+    </section>
+
+    <section id="galeria">
+        <h2 style="margin-bottom: 40px;">🖼️ Mis Visuales</h2>
+        <div class="gallery">
+            <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600" loading="lazy" class="gallery-item" alt="Gaming Setup" onclick="openLightbox(this.src)">
+            <img src="https://images.unsplash.com/photo-1518091043644-c1d445bcc97a?w=600" loading="lazy" class="gallery-item" alt="Stadium" onclick="openLightbox(this.src)">
+            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600" loading="lazy" class="gallery-item" alt="Hardware" onclick="openLightbox(this.src)">
+        </div>
+    </section>
+
+    <section id="contacto">
+        <div class="card reveal">
+            <h2>📩 Contacto Directo</h2>
+            <br>
+            <form id="contactForm">
+                <input type="text" id="nameInput" placeholder="Nombre completo" required>
+                <input type="email" placeholder="Correo electrónico" required>
+                <textarea rows="4" placeholder="¿En qué puedo colaborar contigo?" required></textarea>
+                <button type="submit">DESPEGAR MENSAJE</button>
+            </form>
+            <p id="formMsg" style="margin-top: 20px; text-align: center;"></p>
+        </div>
+    </section>
+
+    <div class="controls">
+        <button class="btn-float" id="themeBtn">🌙</button>
+        <button class="btn-float" id="colorBtn">🎨</button>
+        <a href="#inicio" class="btn-float">↑</a>
+    </div>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <img id="lightboxImg" src="">
+        <div class="close-hint">Presiona ESC o haz clic para cerrar</div>
+    </div>
+
+    <script>
+        // --- 1. MENÚ HAMBURGUESA ---
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            if (window.innerWidth <= 768) {
+                nav.classList.toggle('active');
+            }
+        }
+
+        // --- 2. RELOJ Y SALUDO DINÁMICO ---
+        function startClock() {
+            const clockEl = document.getElementById('clock');
+            setInterval(() => {
+                clockEl.innerText = new Date().toLocaleTimeString();
+            }, 1000);
+        }
+        startClock();
+
+        const hr = new Date().getHours();
+        const welcome = document.getElementById('welcomeTitle');
+        if (hr < 12) welcome.innerHTML = "¡Buenos días, soy <strong>Jose</strong>!";
+        else if (hr < 20) welcome.innerHTML = "¡Buenas tardes, soy <strong>Jose</strong>!";
+        else welcome.innerHTML = "¡Buenas noches, soy <strong>Jose</strong>!";
+
+        // --- 3. MODO OSCURO (LOCALSTORAGE) ---
+        const themeBtn = document.getElementById('themeBtn');
+        if (localStorage.getItem('jose-theme') === 'light') {
+            document.body.classList.add('light-mode');
+            themeBtn.innerText = '🌞';
+        }
+
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('jose-theme', isLight ? 'light' : 'dark');
+            themeBtn.innerText = isLight ? '🌞' : '🌙';
+        });
+
+        // --- 4. COLOR DINÁMICO (CSS VARIABLES) ---
+        document.getElementById('colorBtn').addEventListener('click', () => {
+            const hue = Math.floor(Math.random() * 360);
+            document.documentElement.style.setProperty('--primary', `hsl(${hue}, 80%, 60%)`);
+        });
+
+        // --- 5. LIGHTBOX EXPERTO (CON ESC) ---
+        const lb = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lightboxImg');
+
+        function openLightbox(src) {
+            lbImg.src = src;
+            lb.style.display = 'flex';
+        }
+
+        function closeLightbox() {
+            lb.style.display = 'none';
+        }
+
+        // Evento para cerrar con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        // --- 6. SCROLL REVEAL ---
+        function reveal() {
+            const items = document.querySelectorAll(".reveal");
+            items.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) el.classList.add("active");
+            });
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Inicializar por si ya están visibles
+
+        // --- 7. VALIDACIÓN ---
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nameInput').value;
+            const msg = document.getElementById('formMsg');
+            msg.innerHTML = `✅ ¡Gracias ${nombre}! Mensaje procesado con éxito.`;
+            msg.style.color = "var(--primary)";
+            this.reset();
+        });
+    </script>
+</body>
+</html>
